@@ -1,4 +1,4 @@
-package com.example.users.ui.theme.screens
+package com.example.users.ui.theme.screens.users
 
 import android.util.Log
 import androidx.compose.runtime.getValue

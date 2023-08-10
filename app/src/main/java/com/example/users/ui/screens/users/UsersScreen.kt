@@ -1,11 +1,11 @@
-package com.example.users.ui.theme.screens
+package com.example.users.ui.theme.screens.users
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -22,17 +22,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.users.R
 import com.example.users.data.User
+import com.example.users.ui.navigation.NavigationDestination
+
+
+object UsersDestination : NavigationDestination {
+    override val route = "users_screen"
+}
 
 @Composable
 fun UsersScreen(
-    usersUiState: UsersUiState, modifier: Modifier = Modifier
+    usersUiState: UsersUiState, modifier: Modifier = Modifier,
+    onItemClick: (String, String, String, String, String) -> Unit
 ) {
     when (usersUiState) {
-        is UsersUiState.Loading -> LoadingScreen(modifier = modifier.fillMaxSize())
+        is UsersUiState.Loading -> LoadingScreen(modifier = Modifier.size(200.dp))
 
-        is UsersUiState.Success -> UserList(usersUiState.users, modifier)
+        is UsersUiState.Success -> UserList(
+            usersUiState.users,
+            modifier = modifier,
+            onItemClick = onItemClick
+        )
 
-        is UsersUiState.Error -> ErrorScreen( modifier = modifier.fillMaxSize())
+        is UsersUiState.Error -> ErrorScreen(modifier = modifier)
     }
 }
 
@@ -40,25 +51,41 @@ fun UsersScreen(
 @Composable
 fun LoadingScreen(modifier: Modifier = Modifier) {
     Image(
-        modifier = modifier.size(200.dp),
+        modifier = modifier,
         painter = painterResource(R.drawable.loading_img),
         contentDescription = stringResource(R.string.loading)
     )
 }
 
 @Composable
-fun UserList(users: List<User>, modifier: Modifier = Modifier) {
+fun UserList(
+    users: List<User>,
+    modifier: Modifier = Modifier,
+    onItemClick: (String, String, String, String, String) -> Unit
+) {
     LazyColumn(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         contentPadding = PaddingValues(4.dp)
     ) {
         items(users) {
             UserCard(
                 it,
-                modifier = modifier
+                modifier = Modifier
                     .padding(4.dp)
                     .fillMaxWidth()
                     .aspectRatio(1.5f)
+                    .clickable {
+                        onItemClick(
+                            it.name,
+                            it.email,
+                            "Address: " +
+                                    "${it.address.street}, " +
+                                    "${it.address.suite}, " +
+                                    "${it.address.city}",
+                            it.phone,
+                            it.website
+                        )
+                    }
             )
         }
     }
@@ -73,7 +100,6 @@ fun UserCard(user: User, modifier: Modifier = Modifier) {
         Column {
             Text(text = user.name)
             Text(text = user.email)
-            Text(text = "Address: ${user.address.street}, ${user.address.suite}, ${user.address.city}")
         }
     }
 }

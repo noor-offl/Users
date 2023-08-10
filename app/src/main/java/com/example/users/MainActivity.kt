@@ -8,10 +8,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.example.users.ui.navigation.UsersNavGraph
 import com.example.users.ui.theme.UsersTheme
-import com.example.users.ui.theme.screens.UsersScreen
-import com.example.users.ui.theme.screens.UsersViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +31,6 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun UsersApp() {
-    val usersViewModel: UsersViewModel = viewModel()
-    UsersScreen(usersViewModel.userUiState)
+fun UsersApp(navHostController: NavHostController = rememberNavController()) {
+    UsersNavGraph(navHostController = navHostController)
 }
